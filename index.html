@@ -3,132 +3,360 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anonymous Chat API Docs</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>Anonymous Chat API</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Fira+Code&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0f172a;
-            --text-color: #cbd5e1;
-            --primary: #38bdf8;
-            --card-bg: rgba(30, 41, 59, 0.7);
-            --card-border: rgba(255, 255, 255, 0.1);
+            /* Simpler background */
+            --dark: #0f172a;
+            --surface: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            
+            /* Required Colors */
+            --c-blue: #3b82f6;
+            --c-purple: #8b5cf6;
+            --c-red: #f43f5e;
+            --c-green: #10b981;
         }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
-            color: var(--text-color);
-            margin: 0;
-            padding: 2rem;
+            background-color: var(--dark);
+            color: var(--text-main);
             min-height: 100vh;
+            /* Animated multi-color glow */
+            background-image: 
+                radial-gradient(circle top left, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle bottom right, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle top right, rgba(244, 63, 94, 0.1) 0%, transparent 50%),
+                radial-gradient(circle bottom left, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
+            line-height: 1.6;
         }
+
         .container {
             max-width: 800px;
             margin: 0 auto;
+            padding: 2rem 1.5rem;
+            transition: all 0.3s;
         }
-        .glass-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(16px);
-            border: 1px solid var(--card-border);
-            border-radius: 16px;
-            padding: 2rem;
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid transparent;
+            border-image: linear-gradient(to right, var(--c-green), var(--c-blue), var(--c-purple), var(--c-red)) 1;
+            padding-bottom: 1rem;
             margin-bottom: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
-        .glass-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-        }
-        h1 {
-            color: #fff;
-            font-weight: 800;
-            text-align: center;
-            margin-bottom: 0.5rem;
-            background: -webkit-linear-gradient(45deg, #38bdf8, #818cf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        h2 {
-            color: var(--primary);
-            border-bottom: 1px solid var(--card-border);
-            padding-bottom: 0.5rem;
-        }
-        h3 {
-            color: #e2e8f0;
-        }
-        .badge {
-            background: #3b82f6;
+
+        .title {
+            font-weight: 700;
+            font-size: 1.5rem;
             color: white;
-            padding: 0.2rem 0.6rem;
+        }
+
+        select {
+            background: var(--surface);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
             border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-right: 0.5rem;
+            font-family: inherit;
+            outline: none;
+            cursor: pointer;
         }
-        code {
-            background: rgba(0,0,0,0.3);
-            padding: 0.2rem 0.4rem;
-            border-radius: 4px;
-            color: #fca5a5;
+
+        .subtitle { color: var(--text-muted); margin-bottom: 2rem; font-size: 1rem; }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
         }
-        .footer {
-            text-align: center;
-            margin-top: 3rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--card-border);
-            color: #94a3b8;
-            font-size: 0.9rem;
+
+        /* Top Accent line blending colors */
+        .card-match::before { content: ''; position: absolute; top:0; left:0; width: 100%; height: 3px; background: var(--c-blue); }
+        .card-poll::before { content: ''; position: absolute; top:0; left:0; width: 100%; height: 3px; background: var(--c-purple); }
+        .card-send::before { content: ''; position: absolute; top:0; left:0; width: 100%; height: 3px; background: var(--c-green); }
+        .card-leave::before { content: ''; position: absolute; top:0; left:0; width: 100%; height: 3px; background: var(--c-red); }
+
+        .endpoint-h { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+        
+        .badge {
+            color: white; padding: 0.2rem 0.6rem; border-radius: 6px; font-weight: 700; font-size: 0.8rem;
         }
-        .signature {
-            font-weight: 800;
-            background: -webkit-linear-gradient(45deg, #f472b6, #fb7185);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+
+        .url { font-family: 'Fira Code', monospace; color: var(--text-main); font-size: 1.1rem; }
+
+        .desc { color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem;}
+
+        .sec-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 0.5rem; font-weight: 700; }
+
+        pre {
+            background: #09090b; border: 1px solid var(--border); padding: 1rem; border-radius: 8px;
+            overflow-x: auto; font-family: 'Fira Code', monospace; font-size: 0.85rem; color: #38bdf8;
+            margin-bottom: 1.5rem;
         }
-        .lang-section { margin-bottom: 3rem; }
+
+        .playground { background: rgba(0,0,0,0.2); border-radius: 8px; padding: 1rem; }
+
+        .input-row { display: flex; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        
+        input {
+            flex: 1; min-width: 120px; background: var(--dark); border: 1px solid var(--border);
+            color: white; padding: 0.6rem; border-radius: 6px; font-family: inherit;
+        }
+        input:focus { outline: 2px solid var(--c-blue); border-color: transparent; }
+
+        .btn {
+            background: var(--c-blue); color: white; border: none; padding: 0.6rem 1.2rem;
+            border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s;
+        }
+        .btn:hover { filter: brightness(1.1); }
+        .btn:disabled { opacity: 0.6; cursor: wait; }
+
+        .outbox { margin-top: 1rem; display: none; }
+        .outbox.show { display: block; }
+        .outbox pre { margin-bottom: 0; color: #a7f3d0; border-color: var(--c-green); }
+        .outbox.error pre { color: #fca5a5; border-color: var(--c-red); }
+
+        .footer { text-align: center; margin-top: 4rem; padding: 2rem 0; color: var(--text-muted); border-top: 1px solid var(--border); }
+        .signature { font-weight: 700; background: linear-gradient(to right, var(--c-green), var(--c-blue), var(--c-purple), var(--c-red)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* RTL mode */
+        [dir="rtl"] { text-align: right; }
+        [dir="rtl"] .endpoint-h { flex-direction: row-reverse; }
+
+        @media (max-width: 600px) {
+            .input-row { flex-direction: column; }
+            .btn { width: 100%; }
+            header { flex-direction: column; text-align: center; }
+            .endpoint-h { justify-content: center; }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Anonymous Chat API</h1>
-        <p style="text-align: center; margin-bottom: 3rem;">A lightweight, scalable anonymous chat backend.</p>
 
-        <!-- English -->
-        <div class="glass-card lang-section" dir="ltr">
-            <h2>🇬🇧 English Documentation</h2>
-            <p>Welcome to the Anonymous Chat API. All endpoints accept POST requests with JSON payload.</p>
-            <h3>Endpoints</h3>
-            <p><span class="badge">POST</span> <code>/api/chat/match</code><br>Find a partner or enter the waiting queue. Requires <code>user_id</code>.</p>
-            <p><span class="badge">POST</span> <code>/api/chat/poll</code><br>Check for new messages and room status. Requires <code>room_id</code>, <code>user_id</code>, and optional <code>last_message_id</code>.</p>
-            <p><span class="badge">POST</span> <code>/api/chat/send</code><br>Send a message to the active room. Requires <code>room_id</code>, <code>sender_id</code>, and <code>message</code>.</p>
-            <p><span class="badge">POST</span> <code>/api/chat/leave</code><br>Leave and close the current chat room. Requires <code>room_id</code> and <code>user_id</code>.</p>
+<div class="container" id="app">
+    <header>
+        <div class="title" data-i18n="title">Anonymous Chat API</div>
+        <select id="langSwitch">
+            <option value="en">🇬🇧 English</option>
+            <option value="id">🇮🇩 Bahasa Indonesia</option>
+            <option value="ar">🇸🇦 العربية</option>
+        </select>
+    </header>
+
+    <p class="subtitle" data-i18n="subtitle">The backend foundation for anonymous chatting. Explore and test endpoints live!</p>
+
+    <!-- /api/chat/match -->
+    <div class="card card-match">
+        <div class="endpoint-h">
+            <span class="badge" style="background: var(--c-blue)">POST</span>
+            <span class="url">/api/chat/match</span>
         </div>
+        <p class="desc" data-i18n="desc_match">Find a partner or enter the waiting queue. Requires <b>user_id</b>.</p>
+        
+        <div class="sec-title" data-i18n="code">Code Example</div>
+        <pre><code>fetch('/api/chat/match', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ user_id: 'user_123' })
+})</code></pre>
 
-        <!-- Indonesian -->
-        <div class="glass-card lang-section" dir="ltr">
-            <h2>🇮🇩 Dokumentasi Indonesia</h2>
-            <p>Selamat datang di API Chat Anonim. Semua endpoint menggunakan metode POST dengan format JSON.</p>
-            <h3>Endpoint</h3>
-            <p><span class="badge">POST</span> <code>/api/chat/match</code><br>Cari teman ngobrol atau masuk antrean tunggu. Membutuhkan <code>user_id</code>.</p>
-            <p><span class="badge">POST</span> <code>/api/chat/poll</code><br>Cek pesan baru dan status ruangan. Membutuhkan <code>room_id</code>, <code>user_id</code>, dan opsional <code>last_message_id</code>.</p>
-            <p><span class="badge">POST</span> <code>/api/chat/send</code><br>Kirim pesan ke ruangan aktif. Membutuhkan <code>room_id</code>, <code>sender_id</code>, dan <code>message</code>.</p>
-            <p><span class="badge">POST</span> <code>/api/chat/leave</code><br>Keluar dan tutup ruang obrolan saat ini. Membutuhkan <code>room_id</code> dan <code>user_id</code>.</p>
-        </div>
-
-        <!-- Arabic -->
-        <div class="glass-card lang-section" dir="rtl">
-            <h2 style="border-bottom: 0; text-align: right; border-bottom: 1px solid var(--card-border);">🇸🇦 الوثائق باللغة العربية</h2>
-            <p style="text-align: right;">مرحبًا بكم في واجهة برمجة تطبيقات الدردشة المجهولة. تقبل جميع النقاط طلبات POST بصيغة JSON.</p>
-            <h3 style="text-align: right;">نقاط النهاية (Endpoints)</h3>
-            <p style="text-align: right;"><span class="badge">POST</span> <code>/api/chat/match</code><br>البحث عن شريك أو الدخول في طابور الانتظار. يتطلب <code>user_id</code>.</p>
-            <p style="text-align: right;"><span class="badge">POST</span> <code>/api/chat/poll</code><br>التحقق من الرسائل الجديدة وحالة الغرفة. يتطلب <code>room_id</code> و <code>user_id</code>، و <code>last_message_id</code> (اختياري).</p>
-            <p style="text-align: right;"><span class="badge">POST</span> <code>/api/chat/send</code><br>إرسال رسالة إلى الغرفة النشطة. يتطلب <code>room_id</code> و <code>sender_id</code> و <code>message</code>.</p>
-            <p style="text-align: right;"><span class="badge">POST</span> <code>/api/chat/leave</code><br>مغادرة وإغلاق غرفة الدردشة الحالية. يتطلب <code>room_id</code> و <code>user_id</code>.</p>
-        </div>
-
-        <div class="footer">
-            <p>Developed with ❤️ by <span class="signature">SeBiruMatahri</span></p>
+        <div class="playground">
+            <div class="sec-title" data-i18n="try">Try it live</div>
+            <div class="input-row">
+                <input type="text" id="m-uid" placeholder="user_id (e.g. u123)" />
+            </div>
+            <button class="btn" style="background: var(--c-blue)" onclick="testApi('match')">
+                <span data-i18n="btn_send">Send Request</span> 🚀
+            </button>
+            <div class="outbox" id="o-match"><pre><code id="r-match"></code></pre></div>
         </div>
     </div>
+
+    <!-- /api/chat/poll -->
+    <div class="card card-poll">
+        <div class="endpoint-h">
+            <span class="badge" style="background: var(--c-purple)">POST</span>
+            <span class="url">/api/chat/poll</span>
+        </div>
+        <p class="desc" data-i18n="desc_poll">Poll for room status and new messages. Requires <b>room_id</b>, <b>user_id</b>.</p>
+        
+        <div class="sec-title" data-i18n="code">Code Example</div>
+        <pre><code>fetch('/api/chat/poll', {
+  method: 'POST',
+  body: JSON.stringify({ room_id: 1, user_id: 'user_123' })
+})</code></pre>
+
+        <div class="playground">
+            <div class="sec-title" data-i18n="try">Try it live</div>
+            <div class="input-row">
+                <input type="text" id="p-rid" placeholder="room_id" />
+                <input type="text" id="p-uid" placeholder="user_id" />
+            </div>
+            <button class="btn" style="background: var(--c-purple)" onclick="testApi('poll')">
+                <span data-i18n="btn_send">Send Request</span> 🚀
+            </button>
+            <div class="outbox" id="o-poll"><pre><code id="r-poll"></code></pre></div>
+        </div>
+    </div>
+
+    <!-- /api/chat/send -->
+    <div class="card card-send">
+        <div class="endpoint-h">
+            <span class="badge" style="background: var(--c-green)">POST</span>
+            <span class="url">/api/chat/send</span>
+        </div>
+        <p class="desc" data-i18n="desc_send">Send a message to an active chat. Requires <b>room_id</b>, <b>sender_id</b>, <b>message</b>.</p>
+        
+        <div class="playground">
+            <div class="sec-title" data-i18n="try">Try it live</div>
+            <div class="input-row">
+                <input type="text" id="s-rid" placeholder="room_id" />
+                <input type="text" id="s-uid" placeholder="sender_id" />
+                <input type="text" id="s-msg" placeholder="message" />
+            </div>
+            <button class="btn" style="background: var(--c-green)" onclick="testApi('send')">
+                <span data-i18n="btn_send">Send Request</span> 🚀
+            </button>
+            <div class="outbox" id="o-send"><pre><code id="r-send"></code></pre></div>
+        </div>
+    </div>
+
+    <!-- /api/chat/leave -->
+    <div class="card card-leave">
+        <div class="endpoint-h">
+            <span class="badge" style="background: var(--c-red)">POST</span>
+            <span class="url">/api/chat/leave</span>
+        </div>
+        <p class="desc" data-i18n="desc_leave">Leave the chat and close the room. Requires <b>room_id</b>, <b>user_id</b>.</p>
+        
+        <div class="playground">
+            <div class="sec-title" data-i18n="try">Try it live</div>
+            <div class="input-row">
+                <input type="text" id="l-rid" placeholder="room_id" />
+                <input type="text" id="l-uid" placeholder="user_id" />
+            </div>
+            <button class="btn" style="background: var(--c-red)" onclick="testApi('leave')">
+                <span data-i18n="btn_send">Send Request</span> 🚀
+            </button>
+            <div class="outbox" id="o-leave"><pre><code id="r-leave"></code></pre></div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <span data-i18n="dev_by">Developed with ❤️ by</span> <span class="signature">SeBiruMatahri</span>
+    </div>
+</div>
+
+<script>
+const dict = {
+    en: {
+        title: "Anonymous Chat API",
+        subtitle: "The backend foundation for anonymous chatting. Explore and test endpoints live!",
+        desc_match: "Find a partner or enter the waiting queue. Requires <b>user_id</b>.",
+        desc_poll: "Poll for room status and new messages. Requires <b>room_id</b>, <b>user_id</b>.",
+        desc_send: "Send a message to an active chat. Requires <b>room_id</b>, <b>sender_id</b>, <b>message</b>.",
+        desc_leave: "Leave the chat and close the room. Requires <b>room_id</b>, <b>user_id</b>.",
+        code: "Code Example",
+        try: "Try it live",
+        btn_send: "Send Request",
+        dev_by: "Developed with ❤️ by",
+        dir: "ltr"
+    },
+    id: {
+        title: "API Chat Anonim",
+        subtitle: "Pondasi backend untuk chat anonim. Eksplorasi & tes endpoint secara langsung!",
+        desc_match: "Cari teman chat atau masuk antrean. Wajib mengirim <b>user_id</b>.",
+        desc_poll: "Cek status ruangan dan pesan obrolan baru. Wajib mengirim <b>room_id</b>, <b>user_id</b>.",
+        desc_send: "Kirim pesan ke teman chat Anda. Wajib mengirim <b>room_id</b>, <b>sender_id</b>, <b>message</b>.",
+        desc_leave: "Akhiri chat dan tutup ruangan. Wajib mengirim <b>room_id</b>, <b>user_id</b>.",
+        code: "Contoh Kode",
+        try: "Coba Langsung",
+        btn_send: "Kirim Request",
+        dev_by: "Dikembangkan dengan ❤️ oleh",
+        dir: "ltr"
+    },
+    ar: {
+        title: "واجهة برمجة تطبيقات الدردشة المجهولة",
+        subtitle: "الأساس الخلفي للدردشة المجهولة. استكشف واختبر النقاط مباشرة!",
+        desc_match: "ابحث عن شريك أو ادخل طابور الانتظار. يتطلب <b>user_id</b>.",
+        desc_poll: "تحقق من حالة الغرفة والرسائل الجديدة. يتطلب <b>room_id</b> و <b>user_id</b>.",
+        desc_send: "إرسال رسالة إلى دردشة نشطة. يتطلب <b>room_id</b> و <b>sender_id</b> و <b>message</b>.",
+        desc_leave: "مغادرة الدردشة وإغلاق الغرفة. يتطلب <b>room_id</b> و <b>user_id</b>.",
+        code: "مثال على الرمز",
+        try: "جربه مباشرة",
+        btn_send: "إرسال الطلب",
+        dev_by: "تم التطوير بـ ❤️ بواسطة",
+        dir: "rtl"
+    }
+};
+
+const ls = document.getElementById('langSwitch');
+ls.addEventListener('change', (e) => setLang(e.target.value));
+
+function setLang(lg) {
+    const data = dict[lg];
+    document.getElementById('app').setAttribute('dir', data.dir);
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if(data[key]) el.innerHTML = data[key];
+    });
+}
+setLang('en'); // init
+
+async function testApi(type) {
+    let payload = {};
+    const btn = event.currentTarget.closest('.playground').querySelector('.btn');
+    const outbox = document.getElementById('o-' + type);
+    const codeel = document.getElementById('r-' + type);
+    
+    // Gather inputs
+    if(type === 'match') payload = { user_id: document.getElementById('m-uid').value };
+    if(type === 'poll') payload = { room_id: document.getElementById('p-rid').value, user_id: document.getElementById('p-uid').value };
+    if(type === 'send') payload = { room_id: document.getElementById('s-rid').value, sender_id: document.getElementById('s-uid').value, message: document.getElementById('s-msg').value };
+    if(type === 'leave') payload = { room_id: document.getElementById('l-rid').value, user_id: document.getElementById('l-uid').value };
+
+    // Validasi kosong
+    if(Object.values(payload).some(x => !x)) {
+        alert(ls.value === 'id' ? 'Tolong isi semua bidang input!' : 'Please fill all input fields!');
+        return;
+    }
+
+    btn.disabled = true;
+    outbox.classList.remove('show', 'error');
+    
+    try {
+        const res = await fetch('/api/chat/' + type, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const json = await res.json();
+        
+        if(!res.ok) outbox.classList.add('error');
+        codeel.innerText = JSON.stringify(json, null, 2);
+    } catch (e) {
+        outbox.classList.add('error');
+        codeel.innerText = e.toString();
+    } finally {
+        outbox.classList.add('show');
+        btn.disabled = false;
+    }
+}
+</script>
 </body>
 </html>
