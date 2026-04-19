@@ -106,7 +106,7 @@
         pre {
             background: #09090b; border: 1px solid var(--border); padding: 1rem; border-radius: 8px;
             overflow-x: auto; font-family: 'Fira Code', monospace; font-size: 0.85rem; color: #38bdf8;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.5rem; white-space: pre-wrap;
         }
 
         .playground { background: rgba(0,0,0,0.2); border-radius: 8px; padding: 1rem; }
@@ -168,12 +168,10 @@
         </div>
         <p class="desc" data-i18n="desc_match">Find a partner or enter the waiting queue. Requires <b>user_id</b>.</p>
         
-        <div class="sec-title" data-i18n="code">Code Example</div>
-        <pre><code>fetch('/api/chat/match', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ user_id: 'user_123' })
-})</code></pre>
+        <div class="sec-title" data-i18n="code">cURL Example</div>
+        <pre><code>curl -X POST https://apianon.vercel.app/api/chat/match \
+  -H "Content-Type: application/json" \
+  -d '{"user_id": "user_123"}'</code></pre>
 
         <div class="playground">
             <div class="sec-title" data-i18n="try">Try it live</div>
@@ -195,11 +193,10 @@
         </div>
         <p class="desc" data-i18n="desc_poll">Poll for room status and new messages. Requires <b>room_id</b>, <b>user_id</b>.</p>
         
-        <div class="sec-title" data-i18n="code">Code Example</div>
-        <pre><code>fetch('/api/chat/poll', {
-  method: 'POST',
-  body: JSON.stringify({ room_id: 1, user_id: 'user_123' })
-})</code></pre>
+        <div class="sec-title" data-i18n="code">cURL Example</div>
+        <pre><code>curl -X POST https://apianon.vercel.app/api/chat/poll \
+  -H "Content-Type: application/json" \
+  -d '{"room_id": 1, "user_id": "user_123"}'</code></pre>
 
         <div class="playground">
             <div class="sec-title" data-i18n="try">Try it live</div>
@@ -222,12 +219,17 @@
         </div>
         <p class="desc" data-i18n="desc_send">Send a message to an active chat. Requires <b>room_id</b>, <b>sender_id</b>, <b>message</b>.</p>
         
+        <div class="sec-title" data-i18n="code">cURL Example</div>
+        <pre><code>curl -X POST https://apianon.vercel.app/api/chat/send \
+  -H "Content-Type: application/json" \
+  -d '{"room_id": 1, "sender_id": "user_123", "message": "Hello!"}'</code></pre>
+
         <div class="playground">
             <div class="sec-title" data-i18n="try">Try it live</div>
             <div class="input-row">
                 <input type="text" id="s-rid" placeholder="room_id" />
                 <input type="text" id="s-uid" placeholder="sender_id" />
-                <input type="text" id="s-msg" placeholder="message" />
+                <input type="text" id="s-msg" placeholder="message" value="Hello there!" />
             </div>
             <button class="btn" style="background: var(--c-green)" onclick="testApi('send')">
                 <span data-i18n="btn_send">Send Request</span> 🚀
@@ -244,6 +246,11 @@
         </div>
         <p class="desc" data-i18n="desc_leave">Leave the chat and close the room. Requires <b>room_id</b>, <b>user_id</b>.</p>
         
+        <div class="sec-title" data-i18n="code">cURL Example</div>
+        <pre><code>curl -X POST https://apianon.vercel.app/api/chat/leave \
+  -H "Content-Type: application/json" \
+  -d '{"room_id": 1, "user_id": "user_123"}'</code></pre>
+
         <div class="playground">
             <div class="sec-title" data-i18n="try">Try it live</div>
             <div class="input-row">
@@ -271,7 +278,7 @@ const dict = {
         desc_poll: "Poll for room status and new messages. Requires <b>room_id</b>, <b>user_id</b>.",
         desc_send: "Send a message to an active chat. Requires <b>room_id</b>, <b>sender_id</b>, <b>message</b>.",
         desc_leave: "Leave the chat and close the room. Requires <b>room_id</b>, <b>user_id</b>.",
-        code: "Code Example",
+        code: "cURL Example",
         try: "Try it live",
         btn_send: "Send Request",
         dev_by: "Developed with ❤️ by",
@@ -284,7 +291,7 @@ const dict = {
         desc_poll: "Cek status ruangan dan pesan obrolan baru. Wajib mengirim <b>room_id</b>, <b>user_id</b>.",
         desc_send: "Kirim pesan ke teman chat Anda. Wajib mengirim <b>room_id</b>, <b>sender_id</b>, <b>message</b>.",
         desc_leave: "Akhiri chat dan tutup ruangan. Wajib mengirim <b>room_id</b>, <b>user_id</b>.",
-        code: "Contoh Kode",
+        code: "Contoh cURL",
         try: "Coba Langsung",
         btn_send: "Kirim Request",
         dev_by: "Dikembangkan dengan ❤️ oleh",
@@ -297,13 +304,22 @@ const dict = {
         desc_poll: "تحقق من حالة الغرفة والرسائل الجديدة. يتطلب <b>room_id</b> و <b>user_id</b>.",
         desc_send: "إرسال رسالة إلى دردشة نشطة. يتطلب <b>room_id</b> و <b>sender_id</b> و <b>message</b>.",
         desc_leave: "مغادرة الدردشة وإغلاق الغرفة. يتطلب <b>room_id</b> و <b>user_id</b>.",
-        code: "مثال على الرمز",
+        code: "مثال cURL",
         try: "جربه مباشرة",
         btn_send: "إرسال الطلب",
         dev_by: "تم التطوير بـ ❤️ بواسطة",
         dir: "rtl"
     }
 };
+
+// Generate random user_id on load
+const generateUserId = () => 'user_' + Math.random().toString(36).substr(2, 6);
+const currentUser = generateUserId();
+
+document.getElementById('m-uid').value = currentUser;
+document.getElementById('p-uid').value = currentUser;
+document.getElementById('s-uid').value = currentUser;
+document.getElementById('l-uid').value = currentUser;
 
 const ls = document.getElementById('langSwitch');
 ls.addEventListener('change', (e) => setLang(e.target.value));
