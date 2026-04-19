@@ -3,40 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anonymous Chat API</title>
+    <title>Anonymous Chat API Docs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-color: #0f172a;
+            --text-color: #cbd5e1;
+            --primary: #38bdf8;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --card-border: rgba(255, 255, 255, 0.1);
+        }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
+            color: var(--text-color);
             margin: 0;
-            background-color: #f4f4f5;
-            color: #18181b;
+            padding: 2rem;
+            min-height: 100vh;
         }
         .container {
-            text-align: center;
-            background: white;
-            padding: 3rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            max-width: 800px;
+            margin: 0 auto;
         }
-        h1 { margin-top: 0; color: #09090b; }
-        p { color: #71717a; }
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+        }
+        h1 {
+            color: #fff;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            background: -webkit-linear-gradient(45deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        h2 {
+            color: var(--primary);
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 0.5rem;
+        }
+        h3 {
+            color: #e2e8f0;
+        }
+        .badge {
+            background: #3b82f6;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
         code {
-            background: #f4f4f5;
+            background: rgba(0,0,0,0.3);
             padding: 0.2rem 0.4rem;
             border-radius: 4px;
-            color: #ef4444;
+            color: #fca5a5;
         }
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--card-border);
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        .signature {
+            font-weight: 800;
+            background: -webkit-linear-gradient(45deg, #f472b6, #fb7185);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .lang-section { margin-bottom: 3rem; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>✅ API is Running!</h1>
-        <p>Anonymous Chat API has been successfully deployed to Vercel.</p>
-        <p>Your endpoints are available at: <code>/api/chat/...</code></p>
+        <h1>Anonymous Chat API</h1>
+        <p style="text-align: center; margin-bottom: 3rem;">A lightweight, scalable anonymous chat backend.</p>
+
+        <!-- English -->
+        <div class="glass-card lang-section" dir="ltr">
+            <h2>🇬🇧 English Documentation</h2>
+            <p>Welcome to the Anonymous Chat API. All endpoints accept POST requests with JSON payload.</p>
+            <h3>Endpoints</h3>
+            <p><span class="badge">POST</span> <code>/api/chat/match</code><br>Find a partner or enter the waiting queue. Requires <code>user_id</code>.</p>
+            <p><span class="badge">POST</span> <code>/api/chat/poll</code><br>Check for new messages and room status. Requires <code>room_id</code>, <code>user_id</code>, and optional <code>last_message_id</code>.</p>
+            <p><span class="badge">POST</span> <code>/api/chat/send</code><br>Send a message to the active room. Requires <code>room_id</code>, <code>sender_id</code>, and <code>message</code>.</p>
+            <p><span class="badge">POST</span> <code>/api/chat/leave</code><br>Leave and close the current chat room. Requires <code>room_id</code> and <code>user_id</code>.</p>
+        </div>
+
+        <!-- Indonesian -->
+        <div class="glass-card lang-section" dir="ltr">
+            <h2>🇮🇩 Dokumentasi Indonesia</h2>
+            <p>Selamat datang di API Chat Anonim. Semua endpoint menggunakan metode POST dengan format JSON.</p>
+            <h3>Endpoint</h3>
+            <p><span class="badge">POST</span> <code>/api/chat/match</code><br>Cari teman ngobrol atau masuk antrean tunggu. Membutuhkan <code>user_id</code>.</p>
+            <p><span class="badge">POST</span> <code>/api/chat/poll</code><br>Cek pesan baru dan status ruangan. Membutuhkan <code>room_id</code>, <code>user_id</code>, dan opsional <code>last_message_id</code>.</p>
+            <p><span class="badge">POST</span> <code>/api/chat/send</code><br>Kirim pesan ke ruangan aktif. Membutuhkan <code>room_id</code>, <code>sender_id</code>, dan <code>message</code>.</p>
+            <p><span class="badge">POST</span> <code>/api/chat/leave</code><br>Keluar dan tutup ruang obrolan saat ini. Membutuhkan <code>room_id</code> dan <code>user_id</code>.</p>
+        </div>
+
+        <!-- Arabic -->
+        <div class="glass-card lang-section" dir="rtl">
+            <h2 style="border-bottom: 0; text-align: right; border-bottom: 1px solid var(--card-border);">🇸🇦 الوثائق باللغة العربية</h2>
+            <p style="text-align: right;">مرحبًا بكم في واجهة برمجة تطبيقات الدردشة المجهولة. تقبل جميع النقاط طلبات POST بصيغة JSON.</p>
+            <h3 style="text-align: right;">نقاط النهاية (Endpoints)</h3>
+            <p style="text-align: right;"><span class="badge">POST</span> <code>/api/chat/match</code><br>البحث عن شريك أو الدخول في طابور الانتظار. يتطلب <code>user_id</code>.</p>
+            <p style="text-align: right;"><span class="badge">POST</span> <code>/api/chat/poll</code><br>التحقق من الرسائل الجديدة وحالة الغرفة. يتطلب <code>room_id</code> و <code>user_id</code>، و <code>last_message_id</code> (اختياري).</p>
+            <p style="text-align: right;"><span class="badge">POST</span> <code>/api/chat/send</code><br>إرسال رسالة إلى الغرفة النشطة. يتطلب <code>room_id</code> و <code>sender_id</code> و <code>message</code>.</p>
+            <p style="text-align: right;"><span class="badge">POST</span> <code>/api/chat/leave</code><br>مغادرة وإغلاق غرفة الدردشة الحالية. يتطلب <code>room_id</code> و <code>user_id</code>.</p>
+        </div>
+
+        <div class="footer">
+            <p>Developed with ❤️ by <span class="signature">SeBiruMatahri</span></p>
+        </div>
     </div>
 </body>
 </html>
