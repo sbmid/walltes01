@@ -1,376 +1,618 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anonymous Chat API</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Fira+Code&display=swap" rel="stylesheet">
+    <title>Anonymous Chat API Reference</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Simpler background */
-            --dark: #0f172a;
-            --surface: #1e293b;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border: #334155;
+            /* Corporate Dark Theme */
+            --bg-body: #09090b; /* Very dark zinc */
+            --bg-surface: #18181b;
+            --bg-surface-hover: #27272a;
+            --border-color: #27272a;
+            --text-primary: #f4f4f5;
+            --text-secondary: #a1a1aa;
             
-            /* Required Colors */
-            --c-blue: #3b82f6;
-            --c-purple: #8b5cf6;
-            --c-red: #f43f5e;
-            --c-green: #10b981;
+            /* Requested Accent Colors - Sophisticated Tones */
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --font-sans: 'Inter', system-ui, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--dark);
-            color: var(--text-main);
-            min-height: 100vh;
-            /* Animated multi-color glow */
-            background-image: 
-                radial-gradient(circle top left, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-                radial-gradient(circle bottom right, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
-                radial-gradient(circle top right, rgba(244, 63, 94, 0.1) 0%, transparent 50%),
-                radial-gradient(circle bottom left, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
+            font-family: var(--font-sans);
+            background-color: var(--bg-body);
+            color: var(--text-primary);
             line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem 1.5rem;
-            transition: all 0.3s;
-        }
-
-        header {
+        /* Top Navigation Bar */
+        nav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(9, 9, 11, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid transparent;
-            border-image: linear-gradient(to right, var(--c-green), var(--c-blue), var(--c-purple), var(--c-red)) 1;
-            padding-bottom: 1rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+            font-size: 1.125rem;
+            letter-spacing: -0.025em;
+        }
+
+        .nav-brand-icon {
+            width: 24px; height: 24px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 6px;
+        }
+
+        /* Language Switcher */
+        .lang-select {
+            appearance: none;
+            background: var(--bg-surface) url('data:image/svg+xml;utf8,<svg fill="%23a1a1aa" height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7 7l3-3 3 3m0 6l-3 3-3-3" stroke="%23a1a1aa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>') no-repeat right 0.5rem center;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 0.4rem 2rem 0.4rem 1rem;
+            border-radius: var(--radius-md);
+            font-family: var(--font-sans);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .lang-select:hover { border-color: var(--text-secondary); }
+
+        /* Main Layout Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Hero Section */
+        .hero { margin-bottom: 4rem; max-width: 600px; }
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        .hero p {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+        }
+
+        /* Endpoint Card Layout */
+        .endpoint-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 5rem;
+            padding-top: 3rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        @media (max-width: 900px) {
+            .endpoint-section { grid-template-columns: 1fr; gap: 2rem; }
+        }
+
+        /* Left Side: Documentation Details */
+        .endpoint-info { display: flex; flex-direction: column; gap: 1rem; }
+        
+        .endpoint-header { display: flex; align-items: center; gap: 1rem; }
+        .method-badge {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            letter-spacing: 0.05em;
+        }
+        
+        /* Subtle Badge Colors based on Action */
+        .mb-blue { background: rgba(59, 130, 246, 0.1); color: var(--accent-blue); border: 1px solid rgba(59,130,246,0.2); }
+        .mb-purple { background: rgba(139, 92, 246, 0.1); color: var(--accent-purple); border: 1px solid rgba(139,92,246,0.2); }
+        .mb-green { background: rgba(16, 185, 129, 0.1); color: var(--accent-green); border: 1px solid rgba(16,185,129,0.2); }
+        .mb-red { background: rgba(239, 68, 68, 0.1); color: var(--accent-red); border: 1px solid rgba(239,68,68,0.2); }
+
+        .endpoint-path {
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        .endpoint-desc { color: var(--text-secondary); }
+
+        /* Parameters Table */
+        .params-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        .params-table th {
+            text-align: left;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .params-table td {
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: top;
+        }
+        .param-name { font-family: var(--font-mono); font-size: 0.875rem; font-weight: 500; color: var(--text-primary); }
+        .param-type { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-secondary); margin-left: 0.5rem; }
+        .param-desc { font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.25rem; }
+
+        /* Right Side: Code & Playground */
+        .endpoint-interactive {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .interactive-header {
+            background: rgba(0,0,0,0.2);
+            padding: 0.75rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
             gap: 1rem;
         }
 
-        .title {
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: white;
+        .tab {
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
         }
 
-        select {
-            background: var(--surface);
-            color: var(--text-main);
-            border: 1px solid var(--border);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-family: inherit;
-            outline: none;
+        .code-block {
+            padding: 1.25rem;
+            font-family: var(--font-mono);
+            font-size: 0.8125rem;
+            color: #e4e4e7;
+            background: transparent;
+            overflow-x: auto;
+            border-bottom: 1px solid var(--border-color);
+            white-space: pre-wrap;
+        }
+        .code-string { color: #a5b4fc; } /* syntax highlighting mockup */
+        .code-key { color: #93c5fd; }
+
+        /* Playground form */
+        .playground-form { padding: 1.25rem; background: rgba(0,0,0,0.1); }
+        .pg-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 1rem; font-weight: 600; }
+        
+        .pg-input-group { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.25rem; }
+        .pg-input {
+            width: 100%;
+            background: var(--bg-body);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.625rem 0.875rem;
+            border-radius: var(--radius-md);
+            font-family: var(--font-mono);
+            font-size: 0.8125rem;
+            transition: all 0.2s;
+        }
+        .pg-input:focus { outline: none; border-color: var(--accent-blue); box-shadow: 0 0 0 1px var(--accent-blue); }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--text-primary);
+            color: var(--bg-body);
+            border: none;
+            padding: 0.625rem;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            font-size: 0.875rem;
             cursor: pointer;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn-submit:hover { opacity: 0.9; }
+        .btn-submit:disabled { opacity: 0.5; cursor: wait; }
+
+        .response-area {
+            display: none;
+            border-top: 1px solid var(--border-color);
+            background: #000;
+            padding: 1.25rem;
+            font-family: var(--font-mono);
+            font-size: 0.8125rem;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+        .response-area.active { display: block; }
+        .res-success { color: #34d399; }
+        .res-error { color: #f87171; }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 3rem 2rem;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        .signature {
+            font-weight: 600;
+            background: linear-gradient(to right, var(--accent-green), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .subtitle { color: var(--text-muted); margin-bottom: 2rem; font-size: 1rem; }
-
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Top Accent line blending colors */
-        .card-match::before { content: ''; position: absolute; top:0; left:0; width: 100%; height: 3px; background: var(--c-blue); }
-        .card-poll::before { content: ''; position: absolute; top:0; left:0; width: 100%; height: 3px; background: var(--c-purple); }
-        .card-send::before { content: ''; position: absolute; top:0; left:0; width: 100%; height: 3px; background: var(--c-green); }
-        .card-leave::before { content: ''; position: absolute; top:0; left:0; width: 100%; height: 3px; background: var(--c-red); }
-
-        .endpoint-h { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
-        
-        .badge {
-            color: white; padding: 0.2rem 0.6rem; border-radius: 6px; font-weight: 700; font-size: 0.8rem;
-        }
-
-        .url { font-family: 'Fira Code', monospace; color: var(--text-main); font-size: 1.1rem; }
-
-        .desc { color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem;}
-
-        .sec-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 0.5rem; font-weight: 700; }
-
-        pre {
-            background: #09090b; border: 1px solid var(--border); padding: 1rem; border-radius: 8px;
-            overflow-x: auto; font-family: 'Fira Code', monospace; font-size: 0.85rem; color: #38bdf8;
-            margin-bottom: 1.5rem; white-space: pre-wrap;
-        }
-
-        .playground { background: rgba(0,0,0,0.2); border-radius: 8px; padding: 1rem; }
-
-        .input-row { display: flex; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap; }
-        
-        input {
-            flex: 1; min-width: 120px; background: var(--dark); border: 1px solid var(--border);
-            color: white; padding: 0.6rem; border-radius: 6px; font-family: inherit;
-        }
-        input:focus { outline: 2px solid var(--c-blue); border-color: transparent; }
-
-        .btn {
-            background: var(--c-blue); color: white; border: none; padding: 0.6rem 1.2rem;
-            border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s;
-        }
-        .btn:hover { filter: brightness(1.1); }
-        .btn:disabled { opacity: 0.6; cursor: wait; }
-
-        .outbox { margin-top: 1rem; display: none; }
-        .outbox.show { display: block; }
-        .outbox pre { margin-bottom: 0; color: #a7f3d0; border-color: var(--c-green); }
-        .outbox.error pre { color: #fca5a5; border-color: var(--c-red); }
-
-        .footer { text-align: center; margin-top: 4rem; padding: 2rem 0; color: var(--text-muted); border-top: 1px solid var(--border); }
-        .signature { font-weight: 700; background: linear-gradient(to right, var(--c-green), var(--c-blue), var(--c-purple), var(--c-red)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-        /* RTL mode */
+        /* RTL Support */
         [dir="rtl"] { text-align: right; }
-        [dir="rtl"] .endpoint-h { flex-direction: row-reverse; }
-
-        @media (max-width: 600px) {
-            .input-row { flex-direction: column; }
-            .btn { width: 100%; }
-            header { flex-direction: column; text-align: center; }
-            .endpoint-h { justify-content: center; }
-        }
+        [dir="rtl"] .endpoint-header { flex-direction: row-reverse; justify-content: flex-end;}
+        [dir="rtl"] .params-table th { text-align: right; }
+        [dir="rtl"] .param-type { margin-left: 0; margin-right: 0.5rem; }
     </style>
 </head>
 <body>
 
-<div class="container" id="app">
-    <header>
-        <div class="title" data-i18n="title">Anonymous Chat API</div>
-        <select id="langSwitch">
-            <option value="en">🇬🇧 English</option>
-            <option value="id">🇮🇩 Bahasa Indonesia</option>
-            <option value="ar">🇸🇦 العربية</option>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-brand">
+            <div class="nav-brand-icon"></div>
+            <span>AnonymousChat</span>
+        </div>
+        <select id="langSwitch" class="lang-select">
+            <option value="en">English</option>
+            <option value="id">Bahasa Indonesia</option>
+            <option value="ar">العربية (Arabic)</option>
         </select>
-    </header>
+    </nav>
 
-    <p class="subtitle" data-i18n="subtitle">The backend foundation for anonymous chatting. Explore and test endpoints live!</p>
-
-    <!-- /api/chat/match -->
-    <div class="card card-match">
-        <div class="endpoint-h">
-            <span class="badge" style="background: var(--c-blue)">POST</span>
-            <span class="url">/api/chat/match</span>
-        </div>
-        <p class="desc" data-i18n="desc_match">Find a partner or enter the waiting queue. Requires <b>user_id</b>.</p>
+    <div class="container" id="app">
         
-        <div class="sec-title" data-i18n="code">cURL Example</div>
-        <pre><code>curl -X POST https://apianon.vercel.app/api/chat/match \
-  -H "Content-Type: application/json" \
-  -d '{"user_id": "user_123"}'</code></pre>
+        <!-- Hero -->
+        <div class="hero">
+            <h1 data-i18n="hero_title">API Reference</h1>
+            <p data-i18n="hero_subtitle">Integrate secure, serverless anonymous chatting into your applications with our robust REST API.</p>
+        </div>
 
-        <div class="playground">
-            <div class="sec-title" data-i18n="try">Try it live</div>
-            <div class="input-row">
-                <input type="text" id="m-uid" placeholder="user_id (e.g. u123)" />
+        <!-- Endpoint: Match -->
+        <div class="endpoint-section">
+            <div class="endpoint-info">
+                <div class="endpoint-header">
+                    <span class="method-badge mb-blue">POST</span>
+                    <span class="endpoint-path">/api/chat/match</span>
+                </div>
+                <p class="endpoint-desc" data-i18n="desc_match">Initiates a match. If an empty room exists, the user is paired. Otherwise, a new waiting room is created.</p>
+                
+                <table class="params-table">
+                    <thead><tr><th data-i18n="th_params">Parameters</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <span class="param-name">user_id</span><span class="param-type">string, required</span>
+                                <div class="param-desc" data-i18n="param_uid">Unique identifier for the client making the request.</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            <button class="btn" style="background: var(--c-blue)" onclick="testApi('match')">
-                <span data-i18n="btn_send">Send Request</span> 🚀
-            </button>
-            <div class="outbox" id="o-match"><pre><code id="r-match"></code></pre></div>
-        </div>
-    </div>
-
-    <!-- /api/chat/poll -->
-    <div class="card card-poll">
-        <div class="endpoint-h">
-            <span class="badge" style="background: var(--c-purple)">POST</span>
-            <span class="url">/api/chat/poll</span>
-        </div>
-        <p class="desc" data-i18n="desc_poll">Poll for room status and new messages. Requires <b>room_id</b>, <b>user_id</b>.</p>
-        
-        <div class="sec-title" data-i18n="code">cURL Example</div>
-        <pre><code>curl -X POST https://apianon.vercel.app/api/chat/poll \
-  -H "Content-Type: application/json" \
-  -d '{"room_id": 1, "user_id": "user_123"}'</code></pre>
-
-        <div class="playground">
-            <div class="sec-title" data-i18n="try">Try it live</div>
-            <div class="input-row">
-                <input type="text" id="p-rid" placeholder="room_id" />
-                <input type="text" id="p-uid" placeholder="user_id" />
+            
+            <div class="endpoint-interactive">
+                <div class="interactive-header"><span class="tab">cURL Example</span></div>
+                <div class="code-block">curl -X POST https://apianon.vercel.app/api/chat/match \
+  -H <span class="code-string">"Content-Type: application/json"</span> \
+  -d <span class="code-string">'{ "<span class="code-key">user_id</span>": "user_123" }'</span></div>
+                
+                <div class="playground-form">
+                    <div class="pg-title" data-i18n="try_live">Test Endpoint</div>
+                    <div class="pg-input-group">
+                        <input type="text" class="pg-input" id="m-uid" placeholder="user_id" />
+                    </div>
+                    <button class="btn-submit" onclick="executeApi('match')">
+                        <span data-i18n="btn_send">Send Request</span>
+                    </button>
+                </div>
+                <div class="response-area" id="out-match"><pre id="res-match"></pre></div>
             </div>
-            <button class="btn" style="background: var(--c-purple)" onclick="testApi('poll')">
-                <span data-i18n="btn_send">Send Request</span> 🚀
-            </button>
-            <div class="outbox" id="o-poll"><pre><code id="r-poll"></code></pre></div>
         </div>
-    </div>
 
-    <!-- /api/chat/send -->
-    <div class="card card-send">
-        <div class="endpoint-h">
-            <span class="badge" style="background: var(--c-green)">POST</span>
-            <span class="url">/api/chat/send</span>
-        </div>
-        <p class="desc" data-i18n="desc_send">Send a message to an active chat. Requires <b>room_id</b>, <b>sender_id</b>, <b>message</b>.</p>
-        
-        <div class="sec-title" data-i18n="code">cURL Example</div>
-        <pre><code>curl -X POST https://apianon.vercel.app/api/chat/send \
-  -H "Content-Type: application/json" \
-  -d '{"room_id": 1, "sender_id": "user_123", "message": "Hello!"}'</code></pre>
-
-        <div class="playground">
-            <div class="sec-title" data-i18n="try">Try it live</div>
-            <div class="input-row">
-                <input type="text" id="s-rid" placeholder="room_id" />
-                <input type="text" id="s-uid" placeholder="sender_id" />
-                <input type="text" id="s-msg" placeholder="message" value="Hello there!" />
+        <!-- Endpoint: Poll -->
+        <div class="endpoint-section">
+            <div class="endpoint-info">
+                <div class="endpoint-header">
+                    <span class="method-badge mb-purple">POST</span>
+                    <span class="endpoint-path">/api/chat/poll</span>
+                </div>
+                <p class="endpoint-desc" data-i18n="desc_poll">Polls the server to check the room's status and retrieve any new messages.</p>
+                
+                <table class="params-table">
+                    <thead><tr><th data-i18n="th_params">Parameters</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <span class="param-name">room_id</span><span class="param-type">string, required</span>
+                                <div class="param-desc" data-i18n="param_rid">The UUID of the active chat room.</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="param-name">user_id</span><span class="param-type">string, required</span>
+                                <div class="param-desc" data-i18n="param_uid">Unique identifier for the client.</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            <button class="btn" style="background: var(--c-green)" onclick="testApi('send')">
-                <span data-i18n="btn_send">Send Request</span> 🚀
-            </button>
-            <div class="outbox" id="o-send"><pre><code id="r-send"></code></pre></div>
-        </div>
-    </div>
-
-    <!-- /api/chat/leave -->
-    <div class="card card-leave">
-        <div class="endpoint-h">
-            <span class="badge" style="background: var(--c-red)">POST</span>
-            <span class="url">/api/chat/leave</span>
-        </div>
-        <p class="desc" data-i18n="desc_leave">Leave the chat and close the room. Requires <b>room_id</b>, <b>user_id</b>.</p>
-        
-        <div class="sec-title" data-i18n="code">cURL Example</div>
-        <pre><code>curl -X POST https://apianon.vercel.app/api/chat/leave \
-  -H "Content-Type: application/json" \
-  -d '{"room_id": 1, "user_id": "user_123"}'</code></pre>
-
-        <div class="playground">
-            <div class="sec-title" data-i18n="try">Try it live</div>
-            <div class="input-row">
-                <input type="text" id="l-rid" placeholder="room_id" />
-                <input type="text" id="l-uid" placeholder="user_id" />
+            
+            <div class="endpoint-interactive">
+                <div class="interactive-header"><span class="tab">cURL Example</span></div>
+                <div class="code-block">curl -X POST https://apianon.vercel.app/api/chat/poll \
+  -H <span class="code-string">"Content-Type: application/json"</span> \
+  -d <span class="code-string">'{ "<span class="code-key">room_id</span>": "uuid", "<span class="code-key">user_id</span>": "user_123" }'</span></div>
+                
+                <div class="playground-form">
+                    <div class="pg-title" data-i18n="try_live">Test Endpoint</div>
+                    <div class="pg-input-group">
+                        <input type="text" class="pg-input" id="p-rid" placeholder="room_id" />
+                        <input type="text" class="pg-input" id="p-uid" placeholder="user_id" />
+                    </div>
+                    <button class="btn-submit" onclick="executeApi('poll')">
+                        <span data-i18n="btn_send">Send Request</span>
+                    </button>
+                </div>
+                <div class="response-area" id="out-poll"><pre id="res-poll"></pre></div>
             </div>
-            <button class="btn" style="background: var(--c-red)" onclick="testApi('leave')">
-                <span data-i18n="btn_send">Send Request</span> 🚀
-            </button>
-            <div class="outbox" id="o-leave"><pre><code id="r-leave"></code></pre></div>
         </div>
+
+        <!-- Endpoint: Send -->
+        <div class="endpoint-section">
+            <div class="endpoint-info">
+                <div class="endpoint-header">
+                    <span class="method-badge mb-green">POST</span>
+                    <span class="endpoint-path">/api/chat/send</span>
+                </div>
+                <p class="endpoint-desc" data-i18n="desc_send">Dispatches a text message payload to the specified active room.</p>
+                
+                <table class="params-table">
+                    <thead><tr><th data-i18n="th_params">Parameters</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <span class="param-name">room_id</span><span class="param-type">string, required</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="param-name">sender_id</span><span class="param-type">string, required</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="param-name">message</span><span class="param-type">string, required</span>
+                                <div class="param-desc" data-i18n="param_msg">The text content of the message.</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="endpoint-interactive">
+                <div class="interactive-header"><span class="tab">cURL Example</span></div>
+                <div class="code-block">curl -X POST https://apianon.vercel.app/api/chat/send \
+  -H <span class="code-string">"Content-Type: application/json"</span> \
+  -d <span class="code-string">'{ "<span class="code-key">room_id</span>": "uuid", "<span class="code-key">sender_id</span>": "user_123", "<span class="code-key">message</span>": "Hi!" }'</span></div>
+                
+                <div class="playground-form">
+                    <div class="pg-title" data-i18n="try_live">Test Endpoint</div>
+                    <div class="pg-input-group">
+                        <input type="text" class="pg-input" id="s-rid" placeholder="room_id" />
+                        <input type="text" class="pg-input" id="s-uid" placeholder="sender_id" />
+                        <input type="text" class="pg-input" id="s-msg" placeholder="message" value="Hello Corporate World!" />
+                    </div>
+                    <button class="btn-submit" onclick="executeApi('send')">
+                        <span data-i18n="btn_send">Send Request</span>
+                    </button>
+                </div>
+                <div class="response-area" id="out-send"><pre id="res-send"></pre></div>
+            </div>
+        </div>
+
+        <!-- Endpoint: Leave -->
+        <div class="endpoint-section" style="border-bottom: 1px solid var(--border-color); padding-bottom: 5rem;">
+            <div class="endpoint-info">
+                <div class="endpoint-header">
+                    <span class="method-badge mb-red">POST</span>
+                    <span class="endpoint-path">/api/chat/leave</span>
+                </div>
+                <p class="endpoint-desc" data-i18n="desc_leave">Signals the server to terminate the connection and gracefully close the chat room.</p>
+                
+                <table class="params-table">
+                    <thead><tr><th data-i18n="th_params">Parameters</th></tr></thead>
+                    <tbody>
+                        <tr><td><span class="param-name">room_id</span><span class="param-type">string, required</span></td></tr>
+                        <tr><td><span class="param-name">user_id</span><span class="param-type">string, required</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="endpoint-interactive">
+                <div class="interactive-header"><span class="tab">cURL Example</span></div>
+                <div class="code-block">curl -X POST https://apianon.vercel.app/api/chat/leave \
+  -H <span class="code-string">"Content-Type: application/json"</span> \
+  -d <span class="code-string">'{ "<span class="code-key">room_id</span>": "uuid", "<span class="code-key">user_id</span>": "user_123" }'</span></div>
+                
+                <div class="playground-form">
+                    <div class="pg-title" data-i18n="try_live">Test Endpoint</div>
+                    <div class="pg-input-group">
+                        <input type="text" class="pg-input" id="l-rid" placeholder="room_id" />
+                        <input type="text" class="pg-input" id="l-uid" placeholder="user_id" />
+                    </div>
+                    <button class="btn-submit" onclick="executeApi('leave')">
+                        <span data-i18n="btn_send">Send Request</span>
+                    </button>
+                </div>
+                <div class="response-area" id="out-leave"><pre id="res-leave"></pre></div>
+            </div>
+        </div>
+
     </div>
 
-    <div class="footer">
-        <span data-i18n="dev_by">Developed with ❤️ by</span> <span class="signature">SeBiruMatahri</span>
-    </div>
-</div>
+    <footer>
+        <span data-i18n="footer">Engineered with precision by</span> <span class="signature">SeBiruMatahri</span>
+    </footer>
 
 <script>
-const dict = {
-    en: {
-        title: "Anonymous Chat API",
-        subtitle: "The backend foundation for anonymous chatting. Explore and test endpoints live!",
-        desc_match: "Find a partner or enter the waiting queue. Requires <b>user_id</b>.",
-        desc_poll: "Poll for room status and new messages. Requires <b>room_id</b>, <b>user_id</b>.",
-        desc_send: "Send a message to an active chat. Requires <b>room_id</b>, <b>sender_id</b>, <b>message</b>.",
-        desc_leave: "Leave the chat and close the room. Requires <b>room_id</b>, <b>user_id</b>.",
-        code: "cURL Example",
-        try: "Try it live",
-        btn_send: "Send Request",
-        dev_by: "Developed with ❤️ by",
-        dir: "ltr"
-    },
-    id: {
-        title: "API Chat Anonim",
-        subtitle: "Pondasi backend untuk chat anonim. Eksplorasi & tes endpoint secara langsung!",
-        desc_match: "Cari teman chat atau masuk antrean. Wajib mengirim <b>user_id</b>.",
-        desc_poll: "Cek status ruangan dan pesan obrolan baru. Wajib mengirim <b>room_id</b>, <b>user_id</b>.",
-        desc_send: "Kirim pesan ke teman chat Anda. Wajib mengirim <b>room_id</b>, <b>sender_id</b>, <b>message</b>.",
-        desc_leave: "Akhiri chat dan tutup ruangan. Wajib mengirim <b>room_id</b>, <b>user_id</b>.",
-        code: "Contoh cURL",
-        try: "Coba Langsung",
-        btn_send: "Kirim Request",
-        dev_by: "Dikembangkan dengan ❤️ oleh",
-        dir: "ltr"
-    },
-    ar: {
-        title: "واجهة برمجة تطبيقات الدردشة المجهولة",
-        subtitle: "الأساس الخلفي للدردشة المجهولة. استكشف واختبر النقاط مباشرة!",
-        desc_match: "ابحث عن شريك أو ادخل طابور الانتظار. يتطلب <b>user_id</b>.",
-        desc_poll: "تحقق من حالة الغرفة والرسائل الجديدة. يتطلب <b>room_id</b> و <b>user_id</b>.",
-        desc_send: "إرسال رسالة إلى دردشة نشطة. يتطلب <b>room_id</b> و <b>sender_id</b> و <b>message</b>.",
-        desc_leave: "مغادرة الدردشة وإغلاق الغرفة. يتطلب <b>room_id</b> و <b>user_id</b>.",
-        code: "مثال cURL",
-        try: "جربه مباشرة",
-        btn_send: "إرسال الطلب",
-        dev_by: "تم التطوير بـ ❤️ بواسطة",
-        dir: "rtl"
-    }
-};
+// Mock realistic Session ID
+const generateToken = () => 'usr_' + Math.random().toString(36).substr(2, 9);
+const currentUser = generateToken();
 
-// Generate random user_id on load
-const generateUserId = () => 'user_' + Math.random().toString(36).substr(2, 6);
-const currentUser = generateUserId();
-
+// Inject auto-generated tokens
 document.getElementById('m-uid').value = currentUser;
 document.getElementById('p-uid').value = currentUser;
 document.getElementById('s-uid').value = currentUser;
 document.getElementById('l-uid').value = currentUser;
 
-const ls = document.getElementById('langSwitch');
-ls.addEventListener('change', (e) => setLang(e.target.value));
+// Dictionary for Internationalization
+const i18n = {
+    en: {
+        hero_title: "API Reference",
+        hero_subtitle: "Integrate secure, serverless anonymous chatting into your applications with our robust REST API.",
+        desc_match: "Initiates a match. If an empty room exists, the user is paired. Otherwise, a new waiting room is created.",
+        desc_poll: "Polls the server to check the room's status and retrieve any new messages.",
+        desc_send: "Dispatches a text message payload to the specified active room.",
+        desc_leave: "Signals the server to terminate the connection and gracefully close the chat room.",
+        th_params: "Parameters",
+        param_uid: "Unique identifier for the client making the request.",
+        param_rid: "The UUID of the active chat room.",
+        param_msg: "The text content of the message.",
+        try_live: "Test Endpoint",
+        btn_send: "Send Request",
+        footer: "Engineered with precision by",
+        dir: "ltr"
+    },
+    id: {
+        hero_title: "Referensi API",
+        hero_subtitle: "Integrasikan chat anonim ke aplikasi Anda menggunakan REST API serverless kami yang stabil dan aman.",
+        desc_match: "Mencari teman chat. Menghubungkan user jika ada ruang kosong, atau membuat antrean baru jika penuh.",
+        desc_poll: "Melakukan polling ke server untuk mengecek status ruangan dan mengambil pesan baru.",
+        desc_send: "Mengirimkan data pesan teks ke ruangan yang sedang aktif.",
+        desc_leave: "Memberitahu server untuk mengakhiri koneksi dan menutup ruang obrolan secara aman.",
+        th_params: "Parameter",
+        param_uid: "ID unik (token) untuk klien yang melakukan permintaan.",
+        param_rid: "UUID dari ruang obrolan yang sedang aktif.",
+        param_msg: "Isi teks dari pesan yang dikirim.",
+        try_live: "Tes Langsung (Playground)",
+        btn_send: "Kirim Permintaan",
+        footer: "Dikembangkan dengan presisi oleh",
+        dir: "ltr"
+    },
+    ar: {
+        hero_title: "مرجع واجهة برمجة التطبيقات (API)",
+        hero_subtitle: "قم بدمج محادثات مجهولة آمنة بدون خادم في تطبيقاتك من خلال REST API القوية لدينا.",
+        desc_match: "يبدأ المطابقة. إذا كانت هناك غرفة فارغة، يتم إقران المستخدم. خلاف ذلك، يتم إنشاء غرفة انتظار جديدة.",
+        desc_poll: "يستعلم الخادم للتحقق من حالة الغرفة واسترداد أي رسائل جديدة.",
+        desc_send: "يرسل حمولة رسالة نصية إلى الغرفة النشطة المحددة.",
+        desc_leave: "يشير إلى الخادم لإنهاء الاتصال وإغلاق غرفة الدردشة بأمان.",
+        th_params: "المعلمات",
+        param_uid: "معرف فريد للعميل الذي يقدم الطلب.",
+        param_rid: "معرف UUID لغرفة الدردشة النشطة.",
+        param_msg: "محتوى النص للرسالة.",
+        try_live: "اختبار نقطة النهاية",
+        btn_send: "إرسال الطلب",
+        footer: "صمم بدقة بواسطة",
+        dir: "rtl"
+    }
+};
 
-function setLang(lg) {
-    const data = dict[lg];
-    document.getElementById('app').setAttribute('dir', data.dir);
+const langSelect = document.getElementById('langSwitch');
+langSelect.addEventListener('change', (e) => applyLang(e.target.value));
+
+function applyLang(langCode) {
+    const d = i18n[langCode];
+    document.documentElement.setAttribute('dir', d.dir);
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        if(data[key]) el.innerHTML = data[key];
+        if (d[key]) el.innerHTML = d[key];
     });
 }
-setLang('en'); // init
+applyLang('en'); // Initialize
 
-async function testApi(type) {
+// API Execution Logic
+async function executeApi(endpoint) {
     let payload = {};
-    const btn = event.currentTarget.closest('.playground').querySelector('.btn');
-    const outbox = document.getElementById('o-' + type);
-    const codeel = document.getElementById('r-' + type);
+    const btn = event.currentTarget;
+    const responseBox = document.getElementById('out-' + endpoint);
+    const codeEl = document.getElementById('res-' + endpoint);
     
-    // Gather inputs
-    if(type === 'match') payload = { user_id: document.getElementById('m-uid').value };
-    if(type === 'poll') payload = { room_id: document.getElementById('p-rid').value, user_id: document.getElementById('p-uid').value };
-    if(type === 'send') payload = { room_id: document.getElementById('s-rid').value, sender_id: document.getElementById('s-uid').value, message: document.getElementById('s-msg').value };
-    if(type === 'leave') payload = { room_id: document.getElementById('l-rid').value, user_id: document.getElementById('l-uid').value };
+    // Gather inputs based on endpoint
+    if(endpoint === 'match') payload = { user_id: document.getElementById('m-uid').value };
+    if(endpoint === 'poll') payload = { room_id: document.getElementById('p-rid').value, user_id: document.getElementById('p-uid').value };
+    if(endpoint === 'send') payload = { room_id: document.getElementById('s-rid').value, sender_id: document.getElementById('s-uid').value, message: document.getElementById('s-msg').value };
+    if(endpoint === 'leave') payload = { room_id: document.getElementById('l-rid').value, user_id: document.getElementById('l-uid').value };
 
-    // Validasi kosong
-    if(Object.values(payload).some(x => !x)) {
-        alert(ls.value === 'id' ? 'Tolong isi semua bidang input!' : 'Please fill all input fields!');
+    // Basic Validation
+    if(Object.values(payload).some(v => !v.trim())) {
+        alert("Parameter cannot be empty.");
         return;
     }
 
+    // UI loading state
+    const originalText = btn.innerHTML;
     btn.disabled = true;
-    outbox.classList.remove('show', 'error');
+    btn.innerHTML = '<span style="opacity:0.5">Processing...</span>';
+    responseBox.classList.remove('active');
+    codeEl.className = '';
     
     try {
-        const res = await fetch('/api/chat/' + type, {
+        const res = await fetch('/api/chat/' + endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
-        const json = await res.json();
+        const data = await res.json();
         
-        if(!res.ok) outbox.classList.add('error');
-        codeel.innerText = JSON.stringify(json, null, 2);
-    } catch (e) {
-        outbox.classList.add('error');
-        codeel.innerText = e.toString();
+        responseBox.classList.add('active');
+        codeEl.classList.add(res.ok ? 'res-success' : 'res-error');
+        codeEl.textContent = JSON.stringify(data, null, 2);
+
+        // Auto-fill room_id for convenience if match returns one
+        if(endpoint === 'match' && data.room_id) {
+            document.getElementById('p-rid').value = data.room_id;
+            document.getElementById('s-rid').value = data.room_id;
+            document.getElementById('l-rid').value = data.room_id;
+        }
+
+    } catch (err) {
+        responseBox.classList.add('active');
+        codeEl.classList.add('res-error');
+        codeEl.textContent = err.toString();
     } finally {
-        outbox.classList.add('show');
         btn.disabled = false;
+        btn.innerHTML = originalText;
     }
 }
 </script>
