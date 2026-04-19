@@ -143,26 +143,6 @@
 
         .endpoint-desc { color: var(--text-secondary); }
 
-        /* Parameters Table */
-        .params-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-        .params-table th {
-            text-align: left;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-secondary);
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .params-table td {
-            padding: 1rem 0;
-            border-bottom: 1px solid var(--border-color);
-            vertical-align: top;
-        }
-        .param-name { font-family: var(--font-mono); font-size: 0.875rem; font-weight: 500; color: var(--text-primary); }
-        .param-type { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-secondary); margin-left: 0.5rem; }
-        .param-desc { font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.25rem; }
-
         /* Right Side: Code & Playground */
         .endpoint-interactive {
             background: var(--bg-surface);
@@ -272,8 +252,6 @@
         /* RTL Support */
         [dir="rtl"] { text-align: right; }
         [dir="rtl"] .endpoint-header { flex-direction: row-reverse; justify-content: flex-end;}
-        [dir="rtl"] .params-table th { text-align: right; }
-        [dir="rtl"] .param-type { margin-left: 0; margin-right: 0.5rem; }
     </style>
 </head>
 <body>
@@ -306,32 +284,16 @@
                     <span class="method-badge mb-blue">POST</span>
                     <span class="endpoint-path">/api/chat/match</span>
                 </div>
-                <p class="endpoint-desc" data-i18n="desc_match">Initiates a match. If an empty room exists, the user is paired. Otherwise, a new waiting room is created.</p>
-                
-                <table class="params-table">
-                    <thead><tr><th data-i18n="th_params">Parameters</th></tr></thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <span class="param-name">user_id</span><span class="param-type">string, required</span>
-                                <div class="param-desc" data-i18n="param_uid">Unique identifier for the client making the request.</div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <p class="endpoint-desc" data-i18n="desc_match">Initiates a match. Overwrites empty rooms automatically, returns generated <code>user_id</code> and <code>room_id</code> securely.</p>
             </div>
             
             <div class="endpoint-interactive">
                 <div class="interactive-header"><span class="tab">cURL Example</span></div>
                 <div class="code-block">curl -X POST https://apianon.vercel.app/api/chat/match \
-  -H <span class="code-string">"Content-Type: application/json"</span> \
-  -d <span class="code-string">'{ "<span class="code-key">user_id</span>": "user_123" }'</span></div>
+  -H <span class="code-string">"Content-Type: application/json"</span></div>
                 
                 <div class="playground-form">
                     <div class="pg-title" data-i18n="try_live">Test Endpoint</div>
-                    <div class="pg-input-group">
-                        <input type="text" class="pg-input" id="m-uid" placeholder="user_id" />
-                    </div>
                     <button class="btn-submit" onclick="executeApi('match')">
                         <span data-i18n="btn_send">Send Request</span>
                     </button>
@@ -348,31 +310,13 @@
                     <span class="endpoint-path">/api/chat/poll</span>
                 </div>
                 <p class="endpoint-desc" data-i18n="desc_poll">Polls the server to check the room's status and retrieve any new messages.</p>
-                
-                <table class="params-table">
-                    <thead><tr><th data-i18n="th_params">Parameters</th></tr></thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <span class="param-name">room_id</span><span class="param-type">string, required</span>
-                                <div class="param-desc" data-i18n="param_rid">The UUID of the active chat room.</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="param-name">user_id</span><span class="param-type">string, required</span>
-                                <div class="param-desc" data-i18n="param_uid">Unique identifier for the client.</div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
             
             <div class="endpoint-interactive">
                 <div class="interactive-header"><span class="tab">cURL Example</span></div>
                 <div class="code-block">curl -X POST https://apianon.vercel.app/api/chat/poll \
   -H <span class="code-string">"Content-Type: application/json"</span> \
-  -d <span class="code-string">'{ "<span class="code-key">room_id</span>": "uuid", "<span class="code-key">user_id</span>": "user_123" }'</span></div>
+  -d <span class="code-string">'{ "<span class="code-key">room_id</span>": "uuid", "<span class="code-key">user_id</span>": "usr_xyz" }'</span></div>
                 
                 <div class="playground-form">
                     <div class="pg-title" data-i18n="try_live">Test Endpoint</div>
@@ -396,35 +340,13 @@
                     <span class="endpoint-path">/api/chat/send</span>
                 </div>
                 <p class="endpoint-desc" data-i18n="desc_send">Dispatches a text message payload to the specified active room.</p>
-                
-                <table class="params-table">
-                    <thead><tr><th data-i18n="th_params">Parameters</th></tr></thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <span class="param-name">room_id</span><span class="param-type">string, required</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="param-name">sender_id</span><span class="param-type">string, required</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="param-name">message</span><span class="param-type">string, required</span>
-                                <div class="param-desc" data-i18n="param_msg">The text content of the message.</div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
             
             <div class="endpoint-interactive">
                 <div class="interactive-header"><span class="tab">cURL Example</span></div>
                 <div class="code-block">curl -X POST https://apianon.vercel.app/api/chat/send \
   -H <span class="code-string">"Content-Type: application/json"</span> \
-  -d <span class="code-string">'{ "<span class="code-key">room_id</span>": "uuid", "<span class="code-key">sender_id</span>": "user_123", "<span class="code-key">message</span>": "Hi!" }'</span></div>
+  -d <span class="code-string">'{ "<span class="code-key">room_id</span>": "uuid", "<span class="code-key">sender_id</span>": "usr_xyz", "<span class="code-key">message</span>": "Hi!" }'</span></div>
                 
                 <div class="playground-form">
                     <div class="pg-title" data-i18n="try_live">Test Endpoint</div>
@@ -449,21 +371,13 @@
                     <span class="endpoint-path">/api/chat/leave</span>
                 </div>
                 <p class="endpoint-desc" data-i18n="desc_leave">Signals the server to terminate the connection and gracefully close the chat room.</p>
-                
-                <table class="params-table">
-                    <thead><tr><th data-i18n="th_params">Parameters</th></tr></thead>
-                    <tbody>
-                        <tr><td><span class="param-name">room_id</span><span class="param-type">string, required</span></td></tr>
-                        <tr><td><span class="param-name">user_id</span><span class="param-type">string, required</span></td></tr>
-                    </tbody>
-                </table>
             </div>
             
             <div class="endpoint-interactive">
                 <div class="interactive-header"><span class="tab">cURL Example</span></div>
                 <div class="code-block">curl -X POST https://apianon.vercel.app/api/chat/leave \
   -H <span class="code-string">"Content-Type: application/json"</span> \
-  -d <span class="code-string">'{ "<span class="code-key">room_id</span>": "uuid", "<span class="code-key">user_id</span>": "user_123" }'</span></div>
+  -d <span class="code-string">'{ "<span class="code-key">room_id</span>": "uuid", "<span class="code-key">user_id</span>": "usr_xyz" }'</span></div>
                 
                 <div class="playground-form">
                     <div class="pg-title" data-i18n="try_live">Test Endpoint</div>
@@ -486,29 +400,14 @@
     </footer>
 
 <script>
-// Mock realistic Session ID
-const generateToken = () => 'usr_' + Math.random().toString(36).substr(2, 9);
-const currentUser = generateToken();
-
-// Inject auto-generated tokens
-document.getElementById('m-uid').value = currentUser;
-document.getElementById('p-uid').value = currentUser;
-document.getElementById('s-uid').value = currentUser;
-document.getElementById('l-uid').value = currentUser;
-
-// Dictionary for Internationalization
 const i18n = {
     en: {
         hero_title: "API Reference",
         hero_subtitle: "Integrate secure, serverless anonymous chatting into your applications with our robust REST API.",
-        desc_match: "Initiates a match. If an empty room exists, the user is paired. Otherwise, a new waiting room is created.",
+        desc_match: "Initiates a match. Creates or pairs into an empty room securely. Responds with the machine-generated <code>user_id</code> and <code>room_id</code>.",
         desc_poll: "Polls the server to check the room's status and retrieve any new messages.",
         desc_send: "Dispatches a text message payload to the specified active room.",
         desc_leave: "Signals the server to terminate the connection and gracefully close the chat room.",
-        th_params: "Parameters",
-        param_uid: "Unique identifier for the client making the request.",
-        param_rid: "The UUID of the active chat room.",
-        param_msg: "The text content of the message.",
         try_live: "Test Endpoint",
         btn_send: "Send Request",
         footer: "Engineered with precision by",
@@ -517,15 +416,11 @@ const i18n = {
     id: {
         hero_title: "Referensi API",
         hero_subtitle: "Integrasikan chat anonim ke aplikasi Anda menggunakan REST API serverless kami yang stabil dan aman.",
-        desc_match: "Mencari teman chat. Menghubungkan user jika ada ruang kosong, atau membuat antrean baru jika penuh.",
+        desc_match: "Mencari teman obrolan (tanpa perlu parameter input). API ini yang akan memberi Anda <code>user_id</code> acak pada server secara aman.",
         desc_poll: "Melakukan polling ke server untuk mengecek status ruangan dan mengambil pesan baru.",
         desc_send: "Mengirimkan data pesan teks ke ruangan yang sedang aktif.",
         desc_leave: "Memberitahu server untuk mengakhiri koneksi dan menutup ruang obrolan secara aman.",
-        th_params: "Parameter",
-        param_uid: "ID unik (token) untuk klien yang melakukan permintaan.",
-        param_rid: "UUID dari ruang obrolan yang sedang aktif.",
-        param_msg: "Isi teks dari pesan yang dikirim.",
-        try_live: "Tes Langsung (Playground)",
+        try_live: "Tes Langsung",
         btn_send: "Kirim Permintaan",
         footer: "Dikembangkan dengan presisi oleh",
         dir: "ltr"
@@ -533,14 +428,10 @@ const i18n = {
     ar: {
         hero_title: "مرجع واجهة برمجة التطبيقات (API)",
         hero_subtitle: "قم بدمج محادثات مجهولة آمنة بدون خادم في تطبيقاتك من خلال REST API القوية لدينا.",
-        desc_match: "يبدأ المطابقة. إذا كانت هناك غرفة فارغة، يتم إقران المستخدم. خلاف ذلك، يتم إنشاء غرفة انتظار جديدة.",
+        desc_match: "يبدأ المطابقة. ينشئ أو يقترن في غرفة فارغة بشكل آمن. يستجيب بـ <code>user_id</code> الناتج من الخادم.",
         desc_poll: "يستعلم الخادم للتحقق من حالة الغرفة واسترداد أي رسائل جديدة.",
         desc_send: "يرسل حمولة رسالة نصية إلى الغرفة النشطة المحددة.",
         desc_leave: "يشير إلى الخادم لإنهاء الاتصال وإغلاق غرفة الدردشة بأمان.",
-        th_params: "المعلمات",
-        param_uid: "معرف فريد للعميل الذي يقدم الطلب.",
-        param_rid: "معرف UUID لغرفة الدردشة النشطة.",
-        param_msg: "محتوى النص للرسالة.",
         try_live: "اختبار نقطة النهاية",
         btn_send: "إرسال الطلب",
         footer: "صمم بدقة بواسطة",
@@ -559,28 +450,23 @@ function applyLang(langCode) {
         if (d[key]) el.innerHTML = d[key];
     });
 }
-applyLang('en'); // Initialize
+applyLang('en');
 
-// API Execution Logic
 async function executeApi(endpoint) {
     let payload = {};
     const btn = event.currentTarget;
     const responseBox = document.getElementById('out-' + endpoint);
     const codeEl = document.getElementById('res-' + endpoint);
     
-    // Gather inputs based on endpoint
-    if(endpoint === 'match') payload = { user_id: document.getElementById('m-uid').value };
     if(endpoint === 'poll') payload = { room_id: document.getElementById('p-rid').value, user_id: document.getElementById('p-uid').value };
     if(endpoint === 'send') payload = { room_id: document.getElementById('s-rid').value, sender_id: document.getElementById('s-uid').value, message: document.getElementById('s-msg').value };
     if(endpoint === 'leave') payload = { room_id: document.getElementById('l-rid').value, user_id: document.getElementById('l-uid').value };
 
-    // Basic Validation
-    if(Object.values(payload).some(v => !v.trim())) {
-        alert("Parameter cannot be empty.");
+    if(endpoint !== 'match' && Object.values(payload).some(v => !v.trim())) {
+        alert("Parameters cannot be empty.");
         return;
     }
 
-    // UI loading state
     const originalText = btn.innerHTML;
     btn.disabled = true;
     btn.innerHTML = '<span style="opacity:0.5">Processing...</span>';
@@ -591,7 +477,7 @@ async function executeApi(endpoint) {
         const res = await fetch('/api/chat/' + endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            body: endpoint === 'match' ? undefined : JSON.stringify(payload)
         });
         const data = await res.json();
         
@@ -599,11 +485,18 @@ async function executeApi(endpoint) {
         codeEl.classList.add(res.ok ? 'res-success' : 'res-error');
         codeEl.textContent = JSON.stringify(data, null, 2);
 
-        // Auto-fill room_id for convenience if match returns one
-        if(endpoint === 'match' && data.room_id) {
-            document.getElementById('p-rid').value = data.room_id;
-            document.getElementById('s-rid').value = data.room_id;
-            document.getElementById('l-rid').value = data.room_id;
+        // API Generated ID and Room mapping
+        if(endpoint === 'match') {
+            if(data.user_id) {
+                document.getElementById('p-uid').value = data.user_id;
+                document.getElementById('s-uid').value = data.user_id;
+                document.getElementById('l-uid').value = data.user_id;
+            }
+            if(data.room_id) {
+                document.getElementById('p-rid').value = data.room_id;
+                document.getElementById('s-rid').value = data.room_id;
+                document.getElementById('l-rid').value = data.room_id;
+            }
         }
 
     } catch (err) {

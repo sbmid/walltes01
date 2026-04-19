@@ -9,16 +9,19 @@ export default async function handler(req, res) {
 
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
   
-  const { user_id } = req.body;
-  if (!user_id) return res.status(400).json({ error: 'user_id is required' });
+  // Generate a unique user_id since the API now enforces strict identity isolation
+  const user_id = 'usr_' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
 
   try {
-    // Cari room yang sedang waiting (menunggu teman)
+    // Cari room yang sedang waiting (menunggu teman) yang belum ditinggalkan (dibawah 5 menit)
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    
     const { data: waitingRooms, error: fetchError } = await supabase
       .from('rooms')
       .select('*')
       .eq('status', 'waiting')
       .is('user_b_id', null)
+      .gte('created_at', fiveMinutesAgo)
       .limit(1);
 
     if (fetchError) throw fetchError;
@@ -44,7 +47,7 @@ export default async function handler(req, res) {
         .single();
 
       if (updateError) throw updateError;
-      return res.status(200).json({ message: 'Teman ditemukan!', room_id: updatedRoom.id, status: 'active' });
+      return res.status(200).json({ message: 'Teman ditemukan!', room_id: updatedRoom.id, status: 'active', user_id });
     
     } else {
       // TIDAK ADA TEMAN: Bikin antrean baru (room baru)
@@ -55,7 +58,7 @@ export default async function handler(req, res) {
         .single();
 
       if (insertError) throw insertError;
-      return res.status(200).json({ message: 'Mencari teman...', room_id: newRoom.id, status: 'waiting' });
+      return res.status(200).json({ message: 'Mencari teman...', room_id: newRoom.id, status: 'waiting', user_id });
     }
   } catch (error) {
     console.error('Match error:', error);
