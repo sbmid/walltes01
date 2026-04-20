@@ -21,7 +21,7 @@ export default async function handler(req, res) {
       .select('*')
       .eq('status', 'waiting')
       .is('user_b_id', null)
-      .gte('created_at', fiveMinutesAgo)
+      .gte('last_activity', fiveMinutesAgo)
       .limit(1);
 
     if (fetchError) throw fetchError;
