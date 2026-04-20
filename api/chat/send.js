@@ -9,7 +9,9 @@ export default async function handler(req, res) {
 
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { room_id, sender_id, type = 'text', content } = req.body;
+  const { room_id, sender_id, type = 'text' } = req.body;
+  const content = req.body.content || req.body.message;
+
   if (!room_id || !sender_id || !content) {
     return res.status(400).json({ error: 'room_id, sender_id, dan content wajib diisi' });
   }

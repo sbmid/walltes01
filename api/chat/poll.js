@@ -10,9 +10,10 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== 'GET' && req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { room_id, last_message_id } = req.query;
+  const room_id = req.query.room_id || req.body?.room_id;
+  const last_message_id = req.query.last_message_id || req.body?.last_message_id;
   if (!room_id) return res.status(400).json({ error: 'room_id is required' });
 
   const maxAttempts = 10; // Max iterasi (misal 10 detik agar tidak kena timeout Vercel)
